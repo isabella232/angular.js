@@ -4,40 +4,6 @@ var PATH_MATCH = /^([^?#]*)(\?([^#]*))?(#(.*))?$/,
     DEFAULT_PORTS = {'http': 80, 'https': 443, 'ftp': 21};
 var $locationMinErr = minErr('$location');
 
-
-/**
- * Encode path using encodeUriSegment, ignoring forward slashes
- *
- * @param {string} path Path to encode
- * @returns {string}
- */
-function encodePath(path) {
-  var segments = path.split('/'),
-      i = segments.length;
-
-  while (i--) {
-    // decode forward slashes to prevent them from being double encoded
-    segments[i] = encodeUriSegment(segments[i].replace(/%2F/g, '/'));
-  }
-
-  return segments.join('/');
-}
-
-function decodePath(path, html5Mode) {
-  var segments = path.split('/'),
-      i = segments.length;
-
-  while (i--) {
-    segments[i] = decodeURIComponent(segments[i]);
-    if (html5Mode) {
-      // encode forward slashes to prevent them from being mistaken for path separators
-      segments[i] = segments[i].replace(/\//g, '%2F');
-    }
-  }
-
-  return segments.join('/');
-}
-
 function parseAbsoluteUrl(absoluteUrl, locationObj) {
   var parsedUrl = urlResolve(absoluteUrl);
 
@@ -47,7 +13,7 @@ function parseAbsoluteUrl(absoluteUrl, locationObj) {
 }
 
 var DOUBLE_SLASH_REGEX = /^\s*[\\/]{2,}/;
-function parseAppUrl(url, locationObj, html5Mode) {
+function parseAppUrl(url, locationObj) {
 
   if (DOUBLE_SLASH_REGEX.test(url)) {
     throw $locationMinErr('badpath', 'Invalid url "{0}".', url);
@@ -59,7 +25,7 @@ function parseAppUrl(url, locationObj, html5Mode) {
   }
   var match = urlResolve(url);
   var path = prefixed && match.pathname.charAt(0) === '/' ? match.pathname.substring(1) : match.pathname;
-  locationObj.$$path = decodePath(path, html5Mode);
+  locationObj.$$path = path;
   locationObj.$$search = parseKeyValue(match.search);
   locationObj.$$hash = decodeURIComponent(match.hash);
 
@@ -151,7 +117,7 @@ function LocationHtml5Url(appBase, appBaseNoFile, basePrefix) {
     var search = toKeyValue(this.$$search),
         hash = this.$$hash ? '#' + encodeUriSegment(this.$$hash) : '';
 
-    this.$$url = encodePath(this.$$path) + (search ? '?' + search : '') + hash;
+    this.$$url = this.$$path + (search ? '?' + search : '') + hash;
     this.$$absUrl = appBaseNoFile + this.$$url.substr(1); // first char is always '/'
 
     this.$$urlUpdatedByLocation = true;
@@ -286,7 +252,7 @@ function LocationHashbangUrl(appBase, appBaseNoFile, hashPrefix) {
     var search = toKeyValue(this.$$search),
         hash = this.$$hash ? '#' + encodeUriSegment(this.$$hash) : '';
 
-    this.$$url = encodePath(this.$$path) + (search ? '?' + search : '') + hash;
+    this.$$url = this.$$path + (search ? '?' + search : '') + hash;
     this.$$absUrl = appBase + (this.$$url ? hashPrefix + this.$$url : '');
 
     this.$$urlUpdatedByLocation = true;
@@ -344,7 +310,7 @@ function LocationHashbangInHtml5Url(appBase, appBaseNoFile, hashPrefix) {
     var search = toKeyValue(this.$$search),
         hash = this.$$hash ? '#' + encodeUriSegment(this.$$hash) : '';
 
-    this.$$url = encodePath(this.$$path) + (search ? '?' + search : '') + hash;
+    this.$$url = this.$$path + (search ? '?' + search : '') + hash;
     // include hashPrefix in $$absUrl when $$url is empty so IE9 does not reload page because of removal of '#'
     this.$$absUrl = appBase + hashPrefix + this.$$url;
 

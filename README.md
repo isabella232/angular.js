@@ -1,3 +1,29 @@
+**Note: This is a fork of angular for use within Kibana.**
+
+To publish:
+
+```sh
+# Install latest dependencies:
+yarn --frozen-lockfile
+
+# Make your changes
+# Create a pull request to the elastic-v1.6.x branch
+# Once merged, check out the elastic-v1.6.x branch
+# Bump the version in scripts/elastic/package.json
+# Commit the change to elastic-v1.6.x
+
+# Run the build script
+yarn kibana:release
+
+# Change into the build directory
+cd build
+
+# Publish the package
+npm publish
+```
+
+---
+
 AngularJS [![Build Status](https://travis-ci.org/angular/angular.js.svg?branch=master)](https://travis-ci.org/angular/angular.js)
 =========
 

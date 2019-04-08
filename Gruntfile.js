@@ -9,50 +9,9 @@ var versionInfo = require('./lib/versions/version-info');
 var path = require('path');
 var e2e = require('./test/e2e/tools');
 
-var semver = require('semver');
-var exec = require('shelljs').exec;
-var pkg = require(__dirname + '/package.json');
-
 var docsScriptFolder = 'scripts/docs.angularjs.org-firebase';
 
-// Node.js version checks
-if (!semver.satisfies(process.version, pkg.engines.node)) {
-  reportOrFail('Invalid node version (' + process.version + '). ' +
-               'Please use a version that satisfies ' + pkg.engines.node);
-}
-
-// Yarn version checks
-var expectedYarnVersion = pkg.engines.yarn;
-var currentYarnVersion = exec('yarn --version', {silent: true}).stdout.trim();
-if (!semver.satisfies(currentYarnVersion, expectedYarnVersion)) {
-  reportOrFail('Invalid yarn version (' + currentYarnVersion + '). ' +
-               'Please use a version that satisfies ' + expectedYarnVersion);
-}
-
-// Grunt CLI version checks
-var expectedGruntVersion = pkg.engines.grunt;
-var currentGruntVersions = exec('grunt --version', {silent: true}).stdout;
-var match = /^grunt-cli v(.+)$/m.exec(currentGruntVersions);
-if (!match) {
-  reportOrFail('Unable to compute the current grunt-cli version. We found:\n' +
-               currentGruntVersions);
-} else {
-  if (!semver.satisfies(match[1], expectedGruntVersion)) {
-  reportOrFail('Invalid grunt-cli version (' + match[1] + '). ' +
-               'Please use a version that satisfies ' + expectedGruntVersion);
-  }
-}
-
-// Ensure Node.js dependencies have been installed
-if (!process.env.TRAVIS && !process.env.JENKINS_HOME) {
-  var yarnOutput = exec('yarn install');
-  if (yarnOutput.code !== 0) {
-    throw new Error('Yarn install failed: ' + yarnOutput.stderr);
-  }
-}
-
 module.exports = function(grunt) {
-
   // this loads all the node_modules that start with `grunt-` as plugins
   require('load-grunt-tasks')(grunt);
 
@@ -503,14 +462,3 @@ module.exports = function(grunt) {
   ]);
   grunt.registerTask('default', ['package']);
 };
-
-
-function reportOrFail(message) {
-  if (process.env.TRAVIS || process.env.JENKINS_HOME) {
-    throw new Error(message);
-  } else {
-    console.log('===============================================================================');
-    console.log(message);
-    console.log('===============================================================================');
-  }
-}
