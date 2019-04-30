@@ -1,6 +1,6 @@
 {
   "name": "@elastic/angular",
-  "version": "1.6.9-kibana.1",
+  "version": "1.6.9-kibana.2",
   "description": "HTML enhanced for web apps",
   "main": "index.js",
   "license": "MIT",
