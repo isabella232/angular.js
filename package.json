@@ -4,9 +4,10 @@
   "branchVersion": "^1.6.0",
   "branchPattern": "1.6.*",
   "distTag": "previous_1_6",
+  "homepage": "https://github.com/elastic/angular.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular/angular.js.git"
+    "url": "https://github.com/elastic/angular.js.git"
   },
   "scripts": {
     "commit": "git-cz",
