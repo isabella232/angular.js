@@ -1,7 +1,9 @@
 #!/bin/bash
 
 yarn grunt package
+cp README.md build
 cp scripts/elastic/index.js build
+cp scripts/elastic/package.json build
 cp scripts/elastic/package.json build
 cd build
 git init
